@@ -27,12 +27,21 @@ class SecretManager:
 
         self._log = logging.getLogger(self.__class__.__name__)
 
-    def do_derivation(self, salt:bytes, key:bytes)->bytes:
-        raise NotImplemented()
+    def do_derivation(self, salt: bytes, key: bytes) -> bytes:
+        kdf = PBKDF2HMAC(
+            algorithm=hashes.SHA256(),
+            length=self.KEY_LENGTH,
+            salt=salt,
+            iterations=self.ITERATION,
+        )
+        derived_key = kdf.derive(key)
+        return derived_key
 
-
-    def create(self)->Tuple[bytes, bytes, bytes]:
-        raise NotImplemented()
+    def create(self) -> Tuple[bytes, bytes, bytes]:
+        salt = secrets.token_bytes(self.SALT_LENGTH)
+        key = secrets.token_bytes(self.KEY_LENGTH)
+        token = secrets.token_bytes(self.TOKEN_LENGTH)
+        return salt, key, token
 
 
     def bin_to_b64(self, data:bytes)->str:
@@ -74,3 +83,5 @@ class SecretManager:
     def clean(self):
         # remove crypto data from the target
         raise NotImplemented()
+    
+    
