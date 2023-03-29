@@ -16,3 +16,12 @@ Hacher le sel et la clé directement ne serait pas une bonne idée, car les fonc
 Le HMAC (Hash-based Message Authentication Code) est une construction cryptographique utilisée pour vérifier l'intégrité des données et l'authenticité d'un message. Bien que le HMAC utilise une fonction de hachage, il ne s'agit pas d'une fonction de dérivation de clés.
 
 En utilisant PBKDF2 (Password-Based Key Derivation Function 2), on peut améliorer la sécurité de la dérivation de clés en ajoutant un sel (pour éviter les attaques par table arc-en-ciel) et un grand nombre d'itérations (pour ralentir les attaques par force brute). PBKDF2 utilise également une fonction de hachage (comme SHA256) en interne, mais elle est conçue pour la dérivation de clés à partir de données secrètes (comme un mot de passe ou une clé).
+
+## Question 3
+Il est préférable de vérifier qu'un fichier token.bin n'est pas déjà présent pour plusieurs raisons :
+
+Éviter d'écraser un token existant : Si un fichier token.bin existe déjà, cela signifie que le système a déjà été infecté et qu'un token a été généré. En écrasant ce fichier, nous perdons le token précédent, ce qui pourrait rendre impossible la récupération des données cryptées avec ce token.
+
+Éviter de générer et d'envoyer des éléments cryptographiques inutiles : Si un fichier token.bin existe déjà, cela signifie que les éléments cryptographiques ont déjà été générés et envoyés au CNC. En vérifiant l'existence de ce fichier, nous évitons de générer et d'envoyer des éléments cryptographiques supplémentaires, ce qui pourrait encombrer le CNC et rendre le processus de récupération des données plus difficile.
+
+Éviter de consommer des ressources inutilement : La génération des éléments cryptographiques et l'envoi au CNC consomment des ressources (CPU, mémoire, bande passante). En vérifiant l'existence d'un fichier token.bin, nous économisons ces ressources en évitant de répéter ces opérations inutilement.

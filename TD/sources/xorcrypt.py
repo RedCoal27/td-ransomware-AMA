@@ -14,15 +14,14 @@ def xorcrypt(data:bytes, key:bytes)->bytes:
     return bytes(tmp)
 
 def xorfile(filename:str, key:bytes)->bytes:
+    plain = ""
     # encrypt and decrypt file
-
+    # print("Encrypting file: ", filename)
     # load the file
     with open(filename, "rb") as f:
         plain = f.read()
-
     # Do the job
     encrypted = xorcrypt(plain, key)
-
     # write the result on the same file
     with open(filename, "wb") as f:
         f.write(encrypted)
