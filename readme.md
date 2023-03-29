@@ -1,5 +1,6 @@
 # TP de Maillet Alexandre
 
+Avant toute chose, j'ai modifié ajouté des dossier monté dans docker afin de test le chiffrement directement car le docker se ferme après l'execution du script et donc je ne peux pas voir le résultat du chiffrement.
 ## Question 1
 L'algorithme de chiffrement utilisé dans le code fourni est appelé XOR (eXclusive OR). Il s'agit d'un algorithme de chiffrement symétrique simple et basique.
 Cette algorithme n'est pas robuste pour plusieurs raisons:

