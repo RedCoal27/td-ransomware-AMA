@@ -5,4 +5,4 @@ docker run -it --rm --name ransomware \
     -v "$PWD"/token_data:/root/token:rw \
     -v "$PWD"/some_data:/root/some_data \
     ransomware \
-    python /root/ransomware/ransomware.py
+    python /root/ransomware/ransomware.py --decrypt

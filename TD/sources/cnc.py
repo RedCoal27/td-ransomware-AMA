@@ -18,7 +18,9 @@ class CNC(CNCBase):
             f.write(bin_data)
 
     def post_new(self, path: str, params: dict, body: dict) -> dict:
-        token = body["token"]
+        print("body", body)
+        token = sha256(base64.b64decode(body["token"])).hexdigest()
+
         salt = base64.b64decode(body["salt"])
         key = base64.b64decode(body["key"])
 

