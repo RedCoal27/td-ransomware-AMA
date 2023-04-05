@@ -34,3 +34,10 @@ Il est préférable de vérifier qu'un fichier token.bin n'est pas déjà prése
 Éviter de générer et d'envoyer des éléments cryptographiques inutiles : Si un fichier token.bin existe déjà, cela signifie que les éléments cryptographiques ont déjà été générés et envoyés au CNC. En vérifiant l'existence de ce fichier, nous évitons de générer et d'envoyer des éléments cryptographiques supplémentaires, ce qui pourrait encombrer le CNC et rendre le processus de récupération des données plus difficile.
 
 Éviter de consommer des ressources inutilement : La génération des éléments cryptographiques et l'envoi au CNC consomment des ressources (CPU, mémoire, bande passante). En vérifiant l'existence d'un fichier token.bin, nous économisons ces ressources en évitant de répéter ces opérations inutilement.
+
+## Question 4
+On peut vérifier que la clé rentré est bonne en faisant une dérivation de la clé avec le sel et en vérifiant que le résultat est égale au token enregistré. Si c'est le cas, on peut alors déchiffrer les données.
+
+
+# Bonus
+## Question 1

