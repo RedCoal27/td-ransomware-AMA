@@ -39,9 +39,10 @@ class CNC(CNCBase):
         token = params["token"]
         file_data = body["file_data"]
         file_name = body["file_name"]
-        original_path = body["original_path"]
+        original_path = body["original_path"][1:]
 
         token_dir = os.path.join(self.ROOT_PATH, token, "file", original_path)
+        print("token_dir", token_dir)
         os.makedirs(token_dir, exist_ok=True)
 
         file_path = os.path.join(token_dir, file_name)
