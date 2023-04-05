@@ -1,6 +1,14 @@
 # TP de Maillet Alexandre
 
 Avant toute chose, j'ai modifié ajouté des dossier monté dans docker afin de test le chiffrement directement car le docker se ferme après l'execution du script et donc je ne peux pas voir le résultat du chiffrement.
+## Comment utiliser
+Pour ce code, la console doit être executé dans le dossier TD. 
+Dans un premier temps il faut lancer ./run_cnc.sh afin de démarer le serveur cnc.
+Ensuite on peut créer différents fichier txt dans le dossier some_data afin de voir que le chiffrement a fonctionné.
+Pour lancer le chiffrement, il faut lancer ./run_ransomware.sh dans un autre terminal. Cela va chiffrer les données de la victime (ici visible dans le dossier some_data).
+Pour déchiffrer les données, il faut lancer ./run_decrypt.sh --decrypt. Cela demandera à l'utilisateur alors la clé de chiffrement.
+L'attaquant peut retrouver la clé de la victime simplement en lançant read_key.py . Ce programme demande alors le token de la victime et renvoie la clé de chiffrement en base64. La victime peut alors rentrer cette clé pour retrouver ses fichiers.
+
 ## Question 1
 L'algorithme de chiffrement utilisé dans le code fourni est appelé XOR (eXclusive OR). Il s'agit d'un algorithme de chiffrement symétrique simple et basique.
 Cette algorithme n'est pas robuste pour plusieurs raisons:
