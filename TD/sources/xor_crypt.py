@@ -1,7 +1,7 @@
 from itertools import cycle
 
 
-def xorcrypt(data:bytes, key:bytes)->bytes:
+def xor_crypt(data:bytes, key:bytes)->bytes:
     # encrypt and decrypt bytes
     
     # Loop the key (abc become abcabcabcab....)
@@ -13,7 +13,7 @@ def xorcrypt(data:bytes, key:bytes)->bytes:
     # return encrypted or decrypted data
     return bytes(tmp)
 
-def xorfile(filename:str, key:bytes)->bytes:
+def xor_file(filename:str, key:bytes)->bytes:
     plain = ""
     # encrypt and decrypt file
     # print("Encrypting file: ", filename)
@@ -21,7 +21,7 @@ def xorfile(filename:str, key:bytes)->bytes:
     with open(filename, "rb") as f:
         plain = f.read()
     # Do the job
-    encrypted = xorcrypt(plain, key)
+    encrypted = xor_crypt(plain, key)
     # write the result on the same file
     with open(filename, "wb") as f:
         f.write(encrypted)

