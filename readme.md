@@ -3,11 +3,23 @@
 Avant toute chose, j'ai modifié ajouté des dossier monté dans docker afin de test le chiffrement directement car le docker se ferme après l'execution du script et donc je ne peux pas voir le résultat du chiffrement.
 ## Comment utiliser
 Pour ce code, la console doit être executé dans le dossier TD. 
+
 Dans un premier temps il faut lancer ./run_cnc.sh afin de démarer le serveur cnc.
 Ensuite on peut créer différents fichier txt dans le dossier some_data afin de voir que le chiffrement a fonctionné.
-Pour lancer le chiffrement, il faut lancer ./run_ransomware.sh dans un autre terminal. Cela va chiffrer les données de la victime (ici visible dans le dossier some_data).
-Pour déchiffrer les données, il faut lancer ./run_decrypt.sh --decrypt. Cela demandera à l'utilisateur alors la clé de chiffrement.
-L'attaquant peut retrouver la clé de la victime simplement en lançant read_key.py . Ce programme demande alors le token de la victime et renvoie la clé de chiffrement en base64. La victime peut alors rentrer cette clé pour retrouver ses fichiers.
+
+Pour lancer le chiffrement, il faut lancer ./run_ransomware.sh dans un autre terminal. Cela va chiffrer les données de la victime (ici visible dans le dossier some_data)
+Et tous les fichier txt sont également enregistré dans le dossier cnc en plus des informations sur la clé de chiffrement.
+
+Une fois le rançomware lancé, impossible d'en sortir à moins de payer la rançon! Le prix double toute les 30s alors il faut faire vite!
+
+L'attaquant peut retrouver la clé de la victime simplement en lançant read_key.py . Ce programme demande alors le token de la victime et donne la clé de chiffrement en base64. La victime peut alors rentrer cette clé pour retrouver ses fichiers si il à bien payé le prix correspondant.
+
+Une version amélioré utilisant un Packer et un Dropper est également utilisable. Il faut packer le code en faisant
+
+    -pyinstaller --onefile sources/ransomware.py
+
+Et à ce moment la, au lieu de lancer le run_ransomware.sh, on peut lancer le dropper.sh
+Le code va alors venir télécharger le fichier obfusqué à l'aide d'une clé et un xor. Pour ensuite l'executer directement le code téléchargé sur la machine de la victime!
 
 ## Question 1
 L'algorithme de chiffrement utilisé dans le code fourni est appelé XOR (eXclusive OR). Il s'agit d'un algorithme de chiffrement symétrique simple et basique.
@@ -49,10 +61,11 @@ Pour casser ce ransomware et récupérer la clé de chiffrement, il est possible
 ## Question 3
 La bibliothèque cryptography offre plusieurs options de chiffrement fiables et largement utilisées. Parmi ces options, on trouve le chiffrement symétrique (AES) et le chiffrement asymétrique (RSA). Pour ce ransomware, le chiffrement symétrique AES à été utilisé.
 
-## Question 4
+## Question 4/5
 
 Pour créer un binaire autonome à l'aide de PyInstaller, il suffit de lancer la commande suivante :
 
     -pyinstaller --onefile sources/ransomware.py
 
-Cela va créer un dossier dist qui contient le binaire autonome run_ransomware dans le dossier dist. Pour lancer le binaire, il suffit de lancer ./run_ransomware dans un terminal.
+Cela va créer un dossier dist qui contient le binaire autonome ransomware . Pour lancer le binaire, il suffit de lancer ./run_compile_ransomware.sh dans un terminal.
+

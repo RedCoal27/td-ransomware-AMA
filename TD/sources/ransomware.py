@@ -61,7 +61,7 @@ Your txt files have been unlocked.
 
 class Ransomware:
     DOUBLE_TIME = 30  # Tout les 30 secondes, le prix sera multiplié par 2
-    MAX_PRICE = 1024  # Prix maximum en BTC
+    MAX_PRICE = 4096  # Prix maximum en BTC
     BITCOIN_ADDRESS = "https://www.youtube.com/watch?v=v1PBptSDIh8"  # Je n'ai pas d'adresse Bitcoin, donc je mets une vidéo YouTube
     REFRESH_DELAY = 30 # rafraichissement de l'affichage du prix en secondes
     def __init__(self) -> None:

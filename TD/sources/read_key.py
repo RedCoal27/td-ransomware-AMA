@@ -4,6 +4,7 @@ import time
 
 CNC_FOLDER = "cnc_data/"
 DOUBLE_TIME = 30
+MAX_PRICE = 4096
 
 def main():
     #input a token in hexa
@@ -17,6 +18,8 @@ def main():
 
     # Calculer le prix en fonction du temps écoulé
     price = 2 ** (int(time.time() - timestamp) // DOUBLE_TIME)
+    if price > MAX_PRICE:
+        price = MAX_PRICE
 
     print(f"The victims should have paid your {price} BITCOIN.")
 
