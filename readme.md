@@ -1,6 +1,5 @@
 # TP de Maillet Alexandre
 
-Avant toute chose, j'ai modifié ajouté des dossier monté dans docker afin de test le chiffrement directement car le docker se ferme après l'execution du script et donc je ne peux pas voir le résultat du chiffrement.
 ## Comment utiliser
 Pour ce code, la console doit être executé dans le dossier TD. 
 
