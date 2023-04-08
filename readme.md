@@ -48,3 +48,11 @@ Pour casser ce ransomware et récupérer la clé de chiffrement, il est possible
 
 ## Question 3
 La bibliothèque cryptography offre plusieurs options de chiffrement fiables et largement utilisées. Parmi ces options, on trouve le chiffrement symétrique (AES) et le chiffrement asymétrique (RSA). Pour ce ransomware, le chiffrement symétrique AES à été utilisé.
+
+## Question 4
+
+Pour créer un binaire autonome à l'aide de PyInstaller, il suffit de lancer la commande suivante :
+
+    -pyinstaller --onefile sources/ransomware.py
+
+Cela va créer un dossier dist qui contient le binaire autonome run_ransomware dans le dossier dist. Pour lancer le binaire, il suffit de lancer ./run_ransomware dans un terminal.

