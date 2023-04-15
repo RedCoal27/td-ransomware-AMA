@@ -21,7 +21,7 @@ def main():
     if price > MAX_PRICE:
         price = MAX_PRICE
 
-    print(f"The victims should have paid your {price} BITCOIN.")
+    print(f"The victims should have paid you {price} BITCOIN (or less if you took time to start this program, i don't know, i'm a programme that use data at my disposition).")
 
     #read the key
     with open(os.path.join(path, "key.bin"), "rb") as key_file:

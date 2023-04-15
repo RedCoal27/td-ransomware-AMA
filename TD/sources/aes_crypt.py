@@ -8,7 +8,7 @@ BACKEND = default_backend()
 def aes_encrypt(data: bytes, key: bytes):
     # Génère un vecteur d'initialisation (IV) aléatoire de 12 octets
     iv = os.urandom(12)
-    # Crée un chiffrement AES-GCM avec la clé donnée et l'IV
+    # Crée un chiffrement AES avec la clé donnée et l'IV
     cipher = Cipher(algorithms.AES(key), modes.GCM(iv), backend=BACKEND)
     encryptor = cipher.encryptor()
 
